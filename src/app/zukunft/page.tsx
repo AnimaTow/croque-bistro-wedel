@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import type { ComponentProps } from "react";
 
@@ -26,6 +25,7 @@ type OwnSubmission = {
 };
 
 export default function Page() {
+  const mainSiteUrl = process.env.NEXT_PUBLIC_MAIN_SITE_URL ?? "/";
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -508,12 +508,12 @@ export default function Page() {
                         )}
 
                         <div className="flex flex-wrap justify-center gap-3 pt-2">
-                          <Link
-                              href="/"
+                          <a
+                              href={mainSiteUrl}
                               className="inline-flex items-center justify-center rounded-2xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-white/60"
                           >
                             Zur Startseite
-                          </Link>
+                          </a>
                           {resultsAvailable && resultsPath && (
                               <a
                                   href={resultsPath}
@@ -652,12 +652,12 @@ export default function Page() {
                       </div>
                   )}
 
-                  <Link
-                      href="/"
+                  <a
+                      href={mainSiteUrl}
                       className="inline-flex items-center justify-center w-full rounded-2xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 transition hover:border-gray-400 hover:bg-gray-50"
                   >
                     Zur Startseite
-                  </Link>
+                  </a>
 
                   {mySubmission ? (
                       <div className="space-y-5">

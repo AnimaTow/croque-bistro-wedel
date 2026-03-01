@@ -1,6 +1,4 @@
- "use client";
-
-import Link from "next/link";
+"use client";
 
 function getOrderCta() {
   if (typeof navigator === "undefined") {
@@ -36,6 +34,7 @@ function getOrderCta() {
 
 export default function HomePage() {
   const orderCta = getOrderCta();
+  const surveyUrl = process.env.NEXT_PUBLIC_SURVEY_URL ?? "/zukunft";
 
   return (
       <main
@@ -63,12 +62,12 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-wrap gap-3">
-                <Link
-                    href="/zukunft"
+                <a
+                    href={surveyUrl}
                     className="btn-primary rounded-2xl px-6 py-3 font-semibold shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
                 >
                   Zur Umfrage
-                </Link>
+                </a>
 
                 <a
                     href={orderCta.href}

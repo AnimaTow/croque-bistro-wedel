@@ -8,6 +8,7 @@ const ALLOWED_HOSTS = new Set([
   "zukunft.croque-bistro.de",
   "localhost",
   "127.0.0.1",
+  "10.10.10.101",
 ]);
 
 function isBypassPath(pathname: string): boolean {
