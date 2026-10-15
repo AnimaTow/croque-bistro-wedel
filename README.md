@@ -8,11 +8,11 @@ Next.js 16 App fuer Croque Bistro Wedel mit:
 
 ## Tech Stack
 
-- Next.js `16.1.6` (App Router)
+- Next.js `16.3.8` (App Router)
 - React `19.2.3`
 - TypeScript
 - Tailwind CSS v4
-- SQLite via `better-sqlite3`
+- SQLite via `better-sqlite3` (`12.11.1`, Statement-Cache in `src/lib/db.ts`, siehe unten)
 
 ## Projektstruktur
 
@@ -20,7 +20,7 @@ Next.js 16 App fuer Croque Bistro Wedel mit:
 - `src/app/zukunft/page.tsx`: Umfrage-Frontend
 - `src/app/auswertung/page.tsx`: Auswertung (geschuetzt per Env-Flag)
 - `src/app/api/feedback/route.ts`: API fuer Vote/Status/Update/Delete
-- `src/middleware.ts`: Host/Subdomain-Routing und Unknown-Host-404
+- `src/proxy.ts`: Host/Subdomain-Routing und Unknown-Host-404 (Next.js 16: frueher `middleware.ts`)
 - `src/lib/db.ts`: DB-Zugriff (SQLite)
 - `feedback.db`: lokale SQLite-Datei
 
@@ -92,8 +92,8 @@ Die API (`/api/feedback`) nutzt mehrere Schutzmechanismen:
 - Entwicklung ueber Pfad `/zukunft`.
 
 ### Live (Subdomain-Modell)
-Middleware in `src/middleware.ts`:
-- `zukunft.croque-bistro.de` wird intern auf `/zukunft` geroutet
+Proxy in `src/proxy.ts`:
+- `zukunft.croque-bistro.de` wird intern auf `/zukunft` geroutet (ausser `/api`, `/_next` und `/auswertung`)
 - Hauptdomain (`croque-bistro.de`, `www.croque-bistro.de`) bleibt auf `/`
 - Unbekannte Hosts/Subdomains, die auf diese App zeigen, erhalten eine eigene 404-Antwort mit `noindex`
 
@@ -129,3 +129,12 @@ git remote add origin <REPO_URL>
 git branch -M main
 git push -u origin main
 ```
+
+## Betriebshinweise
+
+- `better-sqlite3` ist ein natives Modul. Nach einem Wechsel der Node-Hauptversion neu bauen
+  (z. B. `npm rebuild better-sqlite3`), sonst bricht `/api/feedback` beim naechsten Neustart.
+- Statement-Cache in `src/lib/db.ts` nicht entfernen: Unter Next.js 16.3 / Node 24 bricht der Prozess
+  ab, wenn die Speicherbereinigung ein vorbereitetes Statement einsammelt.
+- `/auswertung` wird bei jedem Aufruf frisch aus der DB erzeugt (`dynamic = "force-dynamic"`).
+

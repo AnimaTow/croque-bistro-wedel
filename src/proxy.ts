@@ -22,7 +22,7 @@ function isBypassPath(pathname: string): boolean {
   );
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const host = (request.headers.get("host") ?? "").split(":")[0].toLowerCase();
 
   // Reject unknown domains/subdomains that accidentally point to this Next.js app.
@@ -73,7 +73,7 @@ export function middleware(request: NextRequest) {
   }
 
   const { pathname, search } = request.nextUrl;
-  if (isBypassPath(pathname) || pathname.startsWith("/zukunft")) {
+  if (isBypassPath(pathname) || pathname.startsWith("/zukunft") || pathname.startsWith("/auswertung")) {
     return NextResponse.next();
   }
 

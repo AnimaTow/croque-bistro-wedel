@@ -5,6 +5,21 @@ const dbPath = path.join(process.cwd(), "feedback.db");
 
 const db = new Database(dbPath);
 
+// Statement-Cache (Ops 15.10.2026): Unter Next.js 16.3 / Node 24 bricht der Prozess ab, wenn die
+// Speicherbereinigung ein vorbereitetes Statement einsammelt (Assertion in RemoveEnvironmentCleanupHook,
+// Statement::~Statement). Jede SQL-Abfrage wird deshalb nur einmal vorbereitet und danach wiederverwendet,
+// es entsteht kein Statement, das je eingesammelt wird. Alle SQL-Texte sind fest, der Cache bleibt klein.
+const statementCache = new Map<string, Database.Statement>();
+const originalPrepare = db.prepare.bind(db);
+db.prepare = ((sql: string) => {
+    let statement = statementCache.get(sql);
+    if (!statement) {
+        statement = originalPrepare(sql);
+        statementCache.set(sql, statement);
+    }
+    return statement;
+}) as typeof db.prepare;
+
 db.exec(`
     CREATE TABLE IF NOT EXISTS feedback (
                                             id INTEGER PRIMARY KEY,

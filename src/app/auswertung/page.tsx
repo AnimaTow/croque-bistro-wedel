@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import db from "@/lib/db";
 
 export const runtime = "nodejs";
+// Ergebnisse bei jedem Aufruf frisch aus der DB, nicht als Stand des Builds
+export const dynamic = "force-dynamic";
 
 type Row = {
     identity: string | null;
